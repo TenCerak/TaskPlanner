@@ -30,29 +30,34 @@ public class TaskPlannerApplication {
     public CommandLineRunner demo() {
         return (args) -> {
 
-            addUser("admin", "heslo", "ADMIN");
+            var admin = addUser("admin", "heslo", "ADMIN");
             addUser("user", "heslo", "USER");
 
-            addTask("Task 1", "Description 1");
-            addTask("Task 2", "Description 2");
-            addTask("Task 3", "Description 3");
+            addTask("Task 1", "Description 1",admin);
+            addTask("Task 2", "Description 2",admin);
+            addTask("Task 3", "Description 3",admin);
         };
     }
 
-    private void addUser(String username, String password, String role) {
-        if (userService.findByUsername(username) == null) {
-            User user = new User();
+    private User addUser(String username, String password, String role) {
+        var user = userService.findByUsername(username);
+
+        if (user == null) {
+            user = new User();
             user.setUsername(username);
             user.setPassword(passwordEncoder.encode(password));
             user.setRole(role);
             userService.save(user);
         }
+        return user;
+
     }
 
-    private void addTask(String title, String description) {
+    private void addTask(String title, String description,User user) {
 
             Task task = new Task();
             task.setTitle(title);
+            task.setUser(user);
             task.setDescription(description);
             taskRepository.save(task);
 
