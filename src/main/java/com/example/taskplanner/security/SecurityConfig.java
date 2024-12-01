@@ -33,7 +33,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/hello").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
+
                 )
                 .formLogin(Customizer.withDefaults())
                 .logout(logout -> logout
