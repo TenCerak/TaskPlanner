@@ -1,7 +1,9 @@
 package com.example.taskplanner.controller;
 
 import com.example.taskplanner.model.Task;
+import com.example.taskplanner.model.User;
 import com.example.taskplanner.repository.TaskRepository;
+import com.example.taskplanner.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.List;
 public class TaskController {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public TaskController(TaskRepository taskRepository) {
+    public TaskController(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -21,8 +25,17 @@ public class TaskController {
         return taskRepository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public Task getTask(@PathVariable Long id) {
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+    }
+
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
+    public Task createTask(@RequestBody Task task, @RequestParam Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        task.setUser(user);
         return taskRepository.save(task);
     }
 
