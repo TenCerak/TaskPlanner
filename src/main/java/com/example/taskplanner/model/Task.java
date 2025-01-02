@@ -1,5 +1,6 @@
 package com.example.taskplanner.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -23,6 +24,20 @@ public class Task {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    @JsonIgnore
+    private Task parentTask;
+
+    @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> subTasks = new ArrayList<>();
+
+    public Task getParentTask() { return parentTask; }
+    public void setParentTask(Task parentTask) { this.parentTask = parentTask; }
+
+    public List<Task> getSubTasks() { return subTasks; }
+    public void setSubTasks(List<Task> subTasks) { this.subTasks = subTasks; }
 
     public User getUser() {
         return user;

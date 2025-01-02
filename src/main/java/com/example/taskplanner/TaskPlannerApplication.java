@@ -33,9 +33,13 @@ public class TaskPlannerApplication {
             var admin = addUser("admin", "heslo", "ADMIN");
             addUser("user", "heslo", "USER");
 
-            addTask("Task 1", "Description 1",admin);
-            addTask("Task 2", "Description 2",admin);
-            addTask("Task 3", "Description 3",admin);
+            var t1 = addTask("Task 1", "Description 1",admin,null);
+            addTask("Task 2", "Description 2",admin,null);
+            addTask("Task 3", "Description 3",admin,null);
+
+            addTask("Task 1.1", "Description 1.1",admin,t1);
+            addTask("Task 1.2", "Description 1.2",admin,t1);
+            addTask("Task 1.3", "Description 1.3",admin,t1);
         };
     }
 
@@ -53,13 +57,18 @@ public class TaskPlannerApplication {
 
     }
 
-    private void addTask(String title, String description,User user) {
+    private Task addTask(String title, String description,User user, Task parentTask) {
 
             Task task = new Task();
             task.setTitle(title);
             task.setUser(user);
             task.setDescription(description);
+            if(parentTask != null){
+                task.setParentTask(parentTask);
+            }
             taskRepository.save(task);
+
+            return task;
 
     }
 

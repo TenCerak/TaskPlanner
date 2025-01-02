@@ -22,7 +22,17 @@ public class TaskController {
 
     @GetMapping
     public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+        return taskRepository.findByParentTaskIsNull();
+    }
+
+    @GetMapping("/completed")
+    public List<Task> getCompletedTasks() {
+        return taskRepository.findByCompleted(true);
+    }
+
+    @GetMapping("/incomplete")
+    public List<Task> getIncompleteTasks() {
+        return taskRepository.findByCompleted(false);
     }
 
     @GetMapping("/{id}")
@@ -56,5 +66,22 @@ public class TaskController {
     public void deleteTask(@PathVariable Long id) {
         taskRepository.deleteById(id);
     }
+
+    @PostMapping("/{parentId}/subtasks")
+    public Task addSubTask(@PathVariable Long parentId, @RequestBody Task subTask) {
+        Task parentTask = taskRepository.findById(parentId)
+                .orElseThrow(() -> new RuntimeException("Parent task not found"));
+        subTask.setParentTask(parentTask);
+        return taskRepository.save(subTask);
+    }
+
+    @GetMapping("/{parentId}/subtasks")
+    public List<Task> getSubTasks(@PathVariable Long parentId) {
+        Task parentTask = taskRepository.findById(parentId)
+                .orElseThrow(() -> new RuntimeException("Parent task not found"));
+        return taskRepository.findByParentTask(parentTask);
+    }
+
+
 }
 
