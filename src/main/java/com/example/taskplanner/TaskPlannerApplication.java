@@ -37,9 +37,11 @@ public class TaskPlannerApplication {
             addTask("Task 2", "Description 2",admin,null);
             addTask("Task 3", "Description 3",admin,null);
 
-            addTask("Task 1.1", "Description 1.1",admin,t1);
+            var t11 = addTask("Task 1.1", "Description 1.1",admin,t1);
             addTask("Task 1.2", "Description 1.2",admin,t1);
             addTask("Task 1.3", "Description 1.3",admin,t1);
+
+            var t111 = addTask("Task 1.1.1", "Description 1.1.1",admin,t11);
         };
     }
 
