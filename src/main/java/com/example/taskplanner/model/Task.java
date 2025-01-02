@@ -39,6 +39,18 @@ public class Task {
     public List<Task> getSubTasks() { return subTasks; }
     public void setSubTasks(List<Task> subTasks) { this.subTasks = subTasks; }
 
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "task_tag",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
+
+    public List<Tag> getTags() { return tags; }
+    public void setTags(List<Tag> tags) { this.tags = tags; }
+
     public User getUser() {
         return user;
     }

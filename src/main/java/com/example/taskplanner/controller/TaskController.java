@@ -1,7 +1,9 @@
 package com.example.taskplanner.controller;
 
+import com.example.taskplanner.model.Tag;
 import com.example.taskplanner.model.Task;
 import com.example.taskplanner.model.User;
+import com.example.taskplanner.repository.TagRepository;
 import com.example.taskplanner.repository.TaskRepository;
 import com.example.taskplanner.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +16,48 @@ public class TaskController {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TagRepository tagRepository;
 
-    public TaskController(TaskRepository taskRepository, UserRepository userRepository) {
+    public TaskController(TaskRepository taskRepository, UserRepository userRepository, TagRepository tagRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.tagRepository = tagRepository;
+    }
+
+    @PostMapping("/{taskId}/tags")
+    public Task addTagToTask(@PathVariable Long taskId, @RequestBody Tag tag) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        if (tag.getName() == null || tag.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tag name cannot be empty");
+        }
+        Tag existingTag = tagRepository.findByName(tag.getName().trim());
+        if (existingTag == null) {
+            existingTag = tagRepository.save(tag);
+        }
+
+        if (!task.getTags().contains(existingTag)) {
+            task.getTags().add(existingTag);
+        }
+        return taskRepository.save(task);
+    }
+
+    @GetMapping("/{taskId}/tags")
+    public List<Tag> getTagsForTask(@PathVariable Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        return task.getTags();
+    }
+
+    @GetMapping("/by-tag/{tagName}")
+    public List<Task> getTasksByTag(@PathVariable String tagName) {
+        List<Task> tasks = taskRepository.findTasksByTagName(tagName);
+        if (tasks.isEmpty()) {
+            throw new RuntimeException("No tasks found for tag: " + tagName);
+        }
+        return tasks;
     }
 
     @GetMapping
