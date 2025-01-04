@@ -1,9 +1,9 @@
 package com.example.taskplanner.model;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +39,10 @@ public class Task {
 
     public List<Task> getSubTasks() { return subTasks; }
     public void setSubTasks(List<Task> subTasks) { this.subTasks = subTasks; }
+
+    public boolean AllSubtasksCompleted() {
+        return subTasks.stream().allMatch(Task::isCompleted);
+    }
 
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
