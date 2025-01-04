@@ -30,18 +30,18 @@ public class TaskPlannerApplication {
     public CommandLineRunner demo() {
         return (args) -> {
 
-            var admin = addUser("admin", "heslo", "ADMIN");
+            var admin = addUser("admin", "admin", "ADMIN");
             addUser("user", "heslo", "USER");
 
-            var t1 = addTask("Task 1", "Description 1",admin,null);
-            addTask("Task 2", "Description 2",admin,null);
-            addTask("Task 3", "Description 3",admin,null);
+            var t1 = addTask("Task 1", "Description 1", admin, null);
+            addTask("Task 2", "Description 2", admin, null);
+            addTask("Task 3", "Description 3", admin, null);
 
-            var t11 = addTask("Task 1.1", "Description 1.1",admin,t1);
-            addTask("Task 1.2", "Description 1.2",admin,t1);
-            addTask("Task 1.3", "Description 1.3",admin,t1);
+            var t11 = addTask("Task 1.1", "Description 1.1", admin, t1);
+            addTask("Task 1.2", "Description 1.2", admin, t1);
+            addTask("Task 1.3", "Description 1.3", admin, t1);
 
-            var t111 = addTask("Task 1.1.1", "Description 1.1.1",admin,t11);
+            var t111 = addTask("Task 1.1.1", "Description 1.1.1", admin, t11);
         };
     }
 
@@ -59,18 +59,18 @@ public class TaskPlannerApplication {
 
     }
 
-    private Task addTask(String title, String description,User user, Task parentTask) {
+    private Task addTask(String title, String description, User user, Task parentTask) {
 
-            Task task = new Task();
-            task.setTitle(title);
-            task.setUser(user);
-            task.setDescription(description);
-            if(parentTask != null){
-                task.setParentTask(parentTask);
-            }
-            taskRepository.save(task);
+        Task task = new Task();
+        task.setTitle(title);
+        task.setUser(user);
+        task.setDescription(description);
+        if (parentTask != null) {
+            task.setParentTask(parentTask);
+        }
+        taskRepository.save(task);
 
-            return task;
+        return task;
 
     }
 
