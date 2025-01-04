@@ -1,0 +1,18 @@
+@param com.example.taskplanner.model.User user
+@template.layout(title="Register", content=@`
+
+    <h1 class="text-center my-4">Register</h1>
+
+    <form method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+
+`)

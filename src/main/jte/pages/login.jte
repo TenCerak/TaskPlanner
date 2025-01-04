@@ -1,0 +1,20 @@
+@template.layout(title="Login", content=@`
+
+    <h1 class="text-center my-4">Login</h1>
+
+    <form action="/login" method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        <div class="text-center mt-3">
+            <a href="/register">Register</a>
+        </div>
+    </form>
+
+`)

@@ -3,34 +3,38 @@ package com.example.taskplanner.controller;
 import com.example.taskplanner.model.User;
 import com.example.taskplanner.repository.UserRepository;
 import com.example.taskplanner.service.UserService;
-import jakarta.transaction.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/users")
+@Controller
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping()
-    public List<User> list() {
-        return userRepository.findAll();
+
+
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "pages/login";
     }
 
-    @GetMapping("/{id}")
-    public User detail(@PathVariable Long id) {
-        return userRepository.findById(id).orElse(null);
+    @GetMapping("/register")
+    public String showRegistrationForm() {
+        return "pages/register";
     }
 
+    @PostMapping("/register")
+    public String registerUser(@ModelAttribute User user) {
+        userService.registerUser(user);
+        return "redirect:/login";
+    }
 
 
 }
