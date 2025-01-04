@@ -1,10 +1,10 @@
 package com.example.taskplanner.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.validation.constraints.NotBlank;
 
 
 @Entity
