@@ -2,8 +2,7 @@ package com.example.taskplanner;
 
 import com.example.taskplanner.model.Task;
 import com.example.taskplanner.model.User;
-import com.example.taskplanner.repository.TaskRepository;
-import com.example.taskplanner.repository.UserRepository;
+import com.example.taskplanner.service.TaskService;
 import com.example.taskplanner.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,13 +14,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @SpringBootApplication
 public class TaskPlannerApplication {
 
-    private TaskRepository taskRepository;
+    private TaskService taskService;
     private UserService userService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public TaskPlannerApplication(TaskRepository taskRepository, UserService userService, PasswordEncoder passwordEncoder) {
-        this.taskRepository = taskRepository;
+    public TaskPlannerApplication(TaskService taskService, UserService userService, PasswordEncoder passwordEncoder) {
+        this.taskService = taskService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -68,7 +67,7 @@ public class TaskPlannerApplication {
         if (parentTask != null) {
             task.setParentTask(parentTask);
         }
-        taskRepository.save(task);
+        taskService.save(task);
 
         return task;
 

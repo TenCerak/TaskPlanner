@@ -1,8 +1,8 @@
 package com.example.taskplanner.controller;
 
 import com.example.taskplanner.model.Category;
-import com.example.taskplanner.repository.TaskRepository;
 import com.example.taskplanner.service.CategoryService;
+import com.example.taskplanner.service.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
-    public CategoryController(CategoryService categoryService , TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public CategoryController(CategoryService categoryService , TaskService taskService) {
+        this.taskService = taskService;
         this.categoryService = categoryService;
     }
 
@@ -46,7 +46,7 @@ public class CategoryController {
         var cat = categoryService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + id));
         if(cat != null)
         {
-            if(taskRepository.findByCategory(cat).isEmpty())
+            if(taskService.findByCategory(cat).isEmpty())
             {
                 categoryService.deleteById(cat.getId());
             }

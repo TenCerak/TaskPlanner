@@ -1,8 +1,8 @@
 package com.example.taskplanner.controller;
 
 import com.example.taskplanner.model.Tag;
-import com.example.taskplanner.repository.TaskRepository;
 import com.example.taskplanner.service.TagService;
+import com.example.taskplanner.service.TaskService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.*;
 public class TagController {
 
     private final TagService tagService;
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
-    public TagController(TagService tagService, TaskRepository taskRepository) {
+    public TagController(TagService tagService, TaskService taskService) {
         this.tagService = tagService;
-        this.taskRepository = taskRepository;
+        this.taskService = taskService;
     }
 
     @GetMapping
@@ -40,7 +40,7 @@ public class TagController {
         var tag = tagService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + id));
         if(tag != null)
         {
-            if(taskRepository.findTasksByTagName(tag.getName()).isEmpty())
+            if(taskService.findTasksByTagName(tag.getName()).isEmpty())
             {
                 tagService.deleteById(tag.getId());
             }
