@@ -1,5 +1,6 @@
 package com.example.taskplanner.repository;
 
+import com.example.taskplanner.model.Category;
 import com.example.taskplanner.model.Tag;
 import com.example.taskplanner.model.Task;
 import com.example.taskplanner.model.User;
@@ -16,7 +17,15 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
     List<Task> findByParentTaskIsNull();
     @Query("SELECT t FROM Task t JOIN t.tags tag WHERE tag.name = :tagName")
     List<Task> findTasksByTagName(@Param("tagName") String tagName);
+    @Query("SELECT t FROM Task t JOIN t.tags tag WHERE tag.name = :tagName AND t.user = :user")
+    List<Task> findTasksByTagNameAndUserAndCompleted(@Param("tagName") String tagName, User user, boolean completed);
     List<Task> findByUser(User user);
+    List<Task> findByTagsContainingAndUser(Tag tag, User user);
+    List<Task> findByCategory(Category category);
+    List<Task> findByCategoryAndUser(Category category, User user);
+    List<Task> findByCategoryAndUserAndCompleted(Category category,User user, boolean completed);
+
+
 
 
 
