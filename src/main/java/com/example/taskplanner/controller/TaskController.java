@@ -3,9 +3,9 @@ package com.example.taskplanner.controller;
 import com.example.taskplanner.model.Category;
 import com.example.taskplanner.model.Tag;
 import com.example.taskplanner.model.Task;
-import com.example.taskplanner.repository.CategoryRepository;
 import com.example.taskplanner.repository.TagRepository;
 import com.example.taskplanner.repository.TaskRepository;
+import com.example.taskplanner.service.CategoryService;
 import com.example.taskplanner.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,13 +23,13 @@ public class TaskController {
     private final TaskRepository taskRepository;
     private final UserService userService;
     private final TagRepository tagRepository;
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public TaskController(TaskRepository taskRepository, UserService userService, TagRepository tagRepository, CategoryRepository categoryRepository) {
+    public TaskController(TaskRepository taskRepository, UserService userService, TagRepository tagRepository, CategoryService categoryService) {
         this.taskRepository = taskRepository;
         this.userService = userService;
         this.tagRepository = tagRepository;
-        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
     @GetMapping
@@ -83,7 +83,7 @@ public class TaskController {
             task.setParentTask(parentTask);
         }
         model.addAttribute("task", task);
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("categories", categoryService.findAll());
         return "pages/task_form";
     }
 
@@ -100,7 +100,7 @@ public class TaskController {
             task.setParentTask(parentTask);
         }
         if (categoryId != null) {
-            task.setCategory(categoryRepository.findById(categoryId)
+            task.setCategory(categoryService.findById(categoryId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + categoryId)));
         }
         taskRepository.save(task);
@@ -142,7 +142,7 @@ public class TaskController {
 
     @GetMapping("/category/{categoryId}")
     public String viewTasksByCategory(@PathVariable Long categoryId, Model model) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + categoryId));
+        Category category = categoryService.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + categoryId));
         List<Task> tasks = taskRepository.findByCategoryAndUserAndCompleted(category, userService.getCurrentUser(),false);
         model.addAttribute("tasks", tasks);
         model.addAttribute("selectedCategory", category);

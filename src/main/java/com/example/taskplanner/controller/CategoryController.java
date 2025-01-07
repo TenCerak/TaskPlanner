@@ -1,8 +1,8 @@
 package com.example.taskplanner.controller;
 
 import com.example.taskplanner.model.Category;
-import com.example.taskplanner.repository.CategoryRepository;
 import com.example.taskplanner.repository.TaskRepository;
+import com.example.taskplanner.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,42 +13,42 @@ import java.util.List;
 @RequestMapping("/categories")
 public class CategoryController {
 
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
     private final TaskRepository taskRepository;
 
-    public CategoryController(CategoryRepository categoryRepository, TaskRepository taskRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService , TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
+        this.categoryService = categoryService;
     }
 
     @GetMapping
     public String viewCategories(Model model) {
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryService.findAll();
         model.addAttribute("categories", categories);
         return "pages/categories";
     }
 
     @PostMapping
     public String createCategory(@ModelAttribute Category category) {
-        categoryRepository.save(category);
+        categoryService.save(category);
         return "redirect:/categories";
     }
 
     @PostMapping("/update/{id}")
     public String updateCategory(@PathVariable Long id, @ModelAttribute Category category) {
         category.setId(id);
-        categoryRepository.save(category);
+        categoryService.save(category);
         return "redirect:/categories";
     }
 
     @PostMapping("/delete/{id}")
     public String deleteCategory(@PathVariable Long id) {
-        var cat = categoryRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + id));
+        var cat = categoryService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + id));
         if(cat != null)
         {
             if(taskRepository.findByCategory(cat).isEmpty())
             {
-                categoryRepository.delete(cat);
+                categoryService.deleteById(cat.getId());
             }
             else {
                 return "redirect:/tags?error=Category is used in tasks";
@@ -61,8 +61,8 @@ public class CategoryController {
     public String addCategory(@RequestParam String name) {
         Category category = new Category();
         category.setName(name);
-        if(categoryRepository.findByName(name).isEmpty()) {
-            categoryRepository.save(category);
+        if(categoryService.findByName(name).isEmpty()) {
+            categoryService.save(category);
         }
         return "redirect:/categories";
     }
