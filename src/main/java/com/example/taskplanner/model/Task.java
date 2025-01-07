@@ -31,6 +31,13 @@ public class Task {
     @JsonIgnore
     private Task parentTask;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
+
     @OneToMany(mappedBy = "parentTask", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> subTasks = new ArrayList<>();
 
