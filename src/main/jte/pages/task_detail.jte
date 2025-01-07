@@ -16,7 +16,7 @@
                 <p class="card-text">Tags:</p>
                     @for(com.example.taskplanner.model.Tag tag : task.getTags())
                         <span class="badge bg-primary d-inline-flex align-items-center">
-                            ${tag.getName()}
+                            <a href="/tasks/tag/${tag.getId()}" class="text-white">${tag.getName()}</a>
                             <form action="/tasks/${task.getId()}/remove-tag" method="post" style="display:inline;">
                                 <input type="hidden" name="tagId" value="${tag.getId()}">
                                 <button type="submit" class="btn-close btn-close-white ms-2" aria-label="Remove"></button>
@@ -51,7 +51,7 @@
                                     @if(subtask.getTags() != null && !subtask.getTags().isEmpty())
                                         <p class="card-text">Tags:
                                             @for(com.example.taskplanner.model.Tag tag : subtask.getTags())
-                                                <span class="badge bg-primary">${tag.getName()}</span>
+                                                <span class="badge bg-primary"><a href="/tasks/tag/${tag.getId()}" class="text-white">${tag.getName()}</a></span>
                                             @endfor
                                         </p>
                                     @endif
