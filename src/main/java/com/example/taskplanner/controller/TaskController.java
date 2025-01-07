@@ -3,9 +3,9 @@ package com.example.taskplanner.controller;
 import com.example.taskplanner.model.Category;
 import com.example.taskplanner.model.Tag;
 import com.example.taskplanner.model.Task;
-import com.example.taskplanner.repository.TagRepository;
 import com.example.taskplanner.repository.TaskRepository;
 import com.example.taskplanner.service.CategoryService;
+import com.example.taskplanner.service.TagService;
 import com.example.taskplanner.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,13 +22,13 @@ public class TaskController {
 
     private final TaskRepository taskRepository;
     private final UserService userService;
-    private final TagRepository tagRepository;
+    private final TagService tagService;
     private final CategoryService categoryService;
 
-    public TaskController(TaskRepository taskRepository, UserService userService, TagRepository tagRepository, CategoryService categoryService) {
+    public TaskController(TaskRepository taskRepository, UserService userService, TagService tagService, CategoryService categoryService) {
         this.taskRepository = taskRepository;
         this.userService = userService;
-        this.tagRepository = tagRepository;
+        this.tagService = tagService;
         this.categoryService = categoryService;
     }
 
@@ -91,7 +91,7 @@ public class TaskController {
     public String createTask(@ModelAttribute Task task, ArrayList<Long> tagIds, Long parentTaskId, Long categoryId) {
         task.setUser(userService.getCurrentUser());
         if(tagIds != null) {
-            List<Tag> tags = tagRepository.findAllById(tagIds);
+            List<Tag> tags = tagService.findAllById(tagIds);
             task.setTags(tags);
         }
         if (parentTaskId != null) {
@@ -114,14 +114,14 @@ public class TaskController {
     public String viewTask(@PathVariable Long id, Model model) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid task Id:" + id));
         model.addAttribute("task", task);
-        model.addAttribute("tags", tagRepository.findAll());
+        model.addAttribute("tags", tagService.findAll());
         return "pages/task_detail";
     }
 
     @PostMapping("/{id}/add-tag")
     public String addTagToTask(@PathVariable Long id, @RequestParam Long tagId) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid task Id:" + id));
-        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + tagId));
+        Tag tag = tagService.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + tagId));
 
         if(task.getTags().stream().anyMatch(t -> t.getId().equals(tagId)))
             return "redirect:/tasks/" + id;
@@ -134,7 +134,7 @@ public class TaskController {
     @PostMapping("/{id}/remove-tag")
     public String removeTagFromTask(@PathVariable Long id, @RequestParam Long tagId) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid task Id:" + id));
-        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + tagId));
+        Tag tag = tagService.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + tagId));
         task.getTags().remove(tag);
         taskRepository.save(task);
         return "redirect:/tasks/" + id;
@@ -158,16 +158,10 @@ public class TaskController {
 
     @GetMapping("/tag/{tagId}")
     public String viewTasksByTag(@PathVariable Long tagId, Model model) {
-        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + tagId));
+        Tag tag = tagService.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + tagId));
         List<Task> tasks = taskRepository.findTasksByTagNameAndUserAndCompleted(tag.getName(), userService.getCurrentUser(), false);
         model.addAttribute("tasks", tasks);
         model.addAttribute("selectedTag", tag);
         return "pages/tasks";
     }
-
-
-
-
-
-
 }

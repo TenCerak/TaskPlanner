@@ -1,8 +1,8 @@
 package com.example.taskplanner.controller;
 
 import com.example.taskplanner.model.Tag;
-import com.example.taskplanner.repository.TagRepository;
 import com.example.taskplanner.repository.TaskRepository;
+import com.example.taskplanner.service.TagService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class TagController {
 
-    private final TagRepository tagRepository;
+    private final TagService tagService;
     private final TaskRepository taskRepository;
 
-    public TagController(TagRepository tagRepository, TaskRepository taskRepository) {
-        this.tagRepository = tagRepository;
+    public TagController(TagService tagService, TaskRepository taskRepository) {
+        this.tagService = tagService;
         this.taskRepository = taskRepository;
     }
 
     @GetMapping
     public String viewTags(Model model) {
-        model.addAttribute("tags", tagRepository.findAll());
+        model.addAttribute("tags", tagService.findAll());
         return "pages/tags";
     }
 
@@ -29,20 +29,20 @@ public class TagController {
     public String addTag(@RequestParam String name) {
         Tag tag = new Tag();
         tag.setName(name);
-        if(tagRepository.findByName(name).isEmpty()) {
-            tagRepository.save(tag);
+        if(tagService.findByName(name).isEmpty()) {
+            tagService.save(tag);
         }
         return "redirect:/tags";
     }
 
     @PostMapping("/delete/{id}")
     public String deleteTag(@PathVariable Long id) {
-        var tag = tagRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + id));
+        var tag = tagService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + id));
         if(tag != null)
         {
             if(taskRepository.findTasksByTagName(tag.getName()).isEmpty())
             {
-                tagRepository.delete(tag);
+                tagService.deleteById(tag.getId());
             }
             else {
                 return "redirect:/tags?error=Tag is used in tasks";
