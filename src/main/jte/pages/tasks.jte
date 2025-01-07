@@ -12,6 +12,9 @@
                         <div class="card-body">
                             <h5 class="card-title"><a href="/tasks/${task.getId()}">${task.getTitle()}</a></h5>
                             <p class="card-text">${task.getDescription()}</p>
+                            @if(task.getCategory() != null)
+                                <p class="card-text">Category: <a href="/tasks/category/${task.getCategory().getId()}">${task.getCategory().getName()}</a></p>
+                            @endif
                             @if(task.getDueDate() != null)
                                 <p class="card-text"><small class="text-muted">Due: <span class="due-date" data-due-date="${task.getDueDate().toString()}"></span></small></p>
                             @endif

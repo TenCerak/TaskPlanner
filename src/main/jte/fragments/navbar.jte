@@ -21,7 +21,7 @@
                     <a class="nav-link" href="/tags">Manage Tags</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/tasks/completed">View Completed Tasks</a>
+                    <a class="nav-link" href="/categories">Manage Categories</a>
                 </li>
                 <li class="nav-item">
                     <form action="/logout" method="post" style="display:inline;">
