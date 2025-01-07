@@ -1,7 +1,9 @@
 package com.example.taskplanner.controller;
 
+import com.example.taskplanner.model.Category;
 import com.example.taskplanner.model.Tag;
 import com.example.taskplanner.model.Task;
+import com.example.taskplanner.repository.CategoryRepository;
 import com.example.taskplanner.repository.TagRepository;
 import com.example.taskplanner.repository.TaskRepository;
 import com.example.taskplanner.service.UserService;
@@ -21,11 +23,13 @@ public class TaskController {
     private final TaskRepository taskRepository;
     private final UserService userService;
     private final TagRepository tagRepository;
+    private final CategoryRepository categoryRepository;
 
-    public TaskController(TaskRepository taskRepository, UserService userService, TagRepository tagRepository) {
+    public TaskController(TaskRepository taskRepository, UserService userService, TagRepository tagRepository, CategoryRepository categoryRepository) {
         this.taskRepository = taskRepository;
         this.userService = userService;
         this.tagRepository = tagRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping
@@ -79,11 +83,12 @@ public class TaskController {
             task.setParentTask(parentTask);
         }
         model.addAttribute("task", task);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "pages/task_form";
     }
 
     @PostMapping
-    public String createTask(@ModelAttribute Task task, ArrayList<Long> tagIds, Long parentTaskId) {
+    public String createTask(@ModelAttribute Task task, ArrayList<Long> tagIds, Long parentTaskId, Long categoryId) {
         task.setUser(userService.getCurrentUser());
         if(tagIds != null) {
             List<Tag> tags = tagRepository.findAllById(tagIds);
@@ -93,6 +98,10 @@ public class TaskController {
             Task parentTask = taskRepository.findById(parentTaskId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid parent task Id:" + parentTaskId));
             task.setParentTask(parentTask);
+        }
+        if (categoryId != null) {
+            task.setCategory(categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + categoryId)));
         }
         taskRepository.save(task);
         if (task.getParentTask() != null) {
@@ -130,11 +139,35 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/tasks/" + id;
     }
+
+    @GetMapping("/category/{categoryId}")
+    public String viewTasksByCategory(@PathVariable Long categoryId, Model model) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new IllegalArgumentException("Invalid category Id:" + categoryId));
+        List<Task> tasks = taskRepository.findByCategoryAndUserAndCompleted(category, userService.getCurrentUser(),false);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("selectedCategory", category);
+        return "pages/tasks";
+    }
+
     @GetMapping("/completed")
     public String viewCompletedTasks(Model model) {
         List<Task> tasks = taskRepository.findByCompletedAndUser(true, userService.getCurrentUser());
         model.addAttribute("tasks", tasks);
         return "pages/tasks";
     }
+
+    @GetMapping("/tag/{tagId}")
+    public String viewTasksByTag(@PathVariable Long tagId, Model model) {
+        Tag tag = tagRepository.findById(tagId).orElseThrow(() -> new IllegalArgumentException("Invalid tag Id:" + tagId));
+        List<Task> tasks = taskRepository.findTasksByTagNameAndUserAndCompleted(tag.getName(), userService.getCurrentUser(), false);
+        model.addAttribute("tasks", tasks);
+        model.addAttribute("selectedTag", tag);
+        return "pages/tasks";
+    }
+
+
+
+
+
 
 }
