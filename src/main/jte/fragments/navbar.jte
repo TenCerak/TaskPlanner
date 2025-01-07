@@ -12,6 +12,9 @@
                     <a class="nav-link" href="/tasks">View Tasks</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/tasks/completed">View Completed Tasks</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/tasks/new">Create New Task</a>
                 </li>
                 <li class="nav-item">

@@ -30,7 +30,7 @@ public class TaskController {
 
     @GetMapping
     public String viewTasks(Model model) {
-        List<Task> tasks = taskRepository.findByUser(userService.getCurrentUser());
+        List<Task> tasks = taskRepository.findByCompletedAndUser(false,userService.getCurrentUser());
         tasks.sort(Comparator.comparing(Task::getDueDate, Comparator.nullsLast(Comparator.naturalOrder())));
         model.addAttribute("tasks", tasks);
         return "pages/tasks";
@@ -129,6 +129,12 @@ public class TaskController {
         task.getTags().remove(tag);
         taskRepository.save(task);
         return "redirect:/tasks/" + id;
+    }
+    @GetMapping("/completed")
+    public String viewCompletedTasks(Model model) {
+        List<Task> tasks = taskRepository.findByCompletedAndUser(true, userService.getCurrentUser());
+        model.addAttribute("tasks", tasks);
+        return "pages/tasks";
     }
 
 }
