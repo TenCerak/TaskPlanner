@@ -11,6 +11,9 @@
             @if(task.getDueDate() != null)
                 <p class="card-text"><small class="text-muted">Due: <span class="due-date" data-due-date="${task.getDueDate().toString()}"></span></small></p>
             @endif
+            @if(task.getCategory() != null)
+                <p class="card-text">Category: <a href="/tasks/category/${task.getCategory().getId()}">${task.getCategory().getName()}</a></p>
+            @endif
             <p class="card-text">Completed: ${task.isCompleted() ? "Yes" : "No"}</p>
             @if(task.getTags() != null && !task.getTags().isEmpty())
                 <p class="card-text">Tags:</p>
@@ -46,6 +49,9 @@
                                     <p class="card-text">${subtask.getDescription()}</p>
                                     @if(subtask.getDueDate() != null)
                                         <p class="card-text"><small class="text-muted">Due: <span class="due-date" data-due-date="${subtask.getDueDate().toString()}"></span></small></p>
+                                    @endif
+                                    @if(subtask.getCategory() != null)
+                                        <p class="card-text">Category: <a href="/tasks/category/${subtask.getCategory().getId()}">${subtask.getCategory().getName()}</a></p>
                                     @endif
                                     <p class="card-text">Completed: ${subtask.isCompleted() ? "Yes" : "No"}</p>
                                     @if(subtask.getTags() != null && !subtask.getTags().isEmpty())
